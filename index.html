@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>佳里扶輪社 8月17日 幸運抽獎</title>
+<style>
+  :root{
+    --navy:#071B3D;
+    --navy-2:#0B2A5B;
+    --azure:#1B4FA0;
+    --gold:#F2B233;
+    --gold-hi:#FFDA7A;
+    --gold-deep:#B8790A;
+    --cream:#FDF6E7;
+    --serif:"Noto Serif TC","Source Han Serif TC","Songti TC","PMingLiU","MingLiU",serif;
+    --sans:"PingFang TC","Microsoft JhengHei","Heiti TC","Noto Sans TC",sans-serif;
+    --num:"Arial Black","Helvetica Neue",Impact,var(--sans);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(120% 90% at 50% -10%, #123a78 0%, var(--navy-2) 45%, var(--navy) 100%);
+    color:var(--cream);
+    font-family:var(--sans);
+    min-height:100%;
+    overflow:hidden;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;
+    background:
+      repeating-conic-gradient(from 0deg at 50% 50%, rgba(242,178,51,.05) 0deg 2deg, transparent 2deg 12deg);
+    opacity:.5;
+  }
+
+  .app{position:relative;z-index:2;height:100dvh;display:flex;flex-direction:column;padding:clamp(14px,2.4vh,28px) clamp(16px,4vw,48px)}
+
+  /* ---------- 頁首 ---------- */
+  .head{text-align:center;flex:0 0 auto}
+  .eyebrow{
+    font-size:clamp(11px,1.5vh,15px);letter-spacing:.5em;text-indent:.5em;
+    color:var(--gold);font-weight:700;
+  }
+  .rule{display:flex;align-items:center;justify-content:center;gap:14px;margin:.5em 0 .35em}
+  .rule i{display:block;height:1px;width:min(24vw,180px);background:linear-gradient(90deg,transparent,var(--gold-deep))}
+  .rule i:last-child{background:linear-gradient(90deg,var(--gold-deep),transparent)}
+  .rule span{color:var(--gold);font-size:12px;transform:rotate(45deg)}
+  h1{
+    font-family:var(--serif);font-weight:900;
+    font-size:clamp(26px,5.2vh,58px);letter-spacing:.08em;line-height:1.15;
+  }
+  .prize-line{
+    margin-top:.7em;display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.6em;
+    border:1px solid rgba(242,178,51,.45);border-radius:999px;
+    padding:.45em 1.3em;font-size:clamp(12px,1.9vh,19px);letter-spacing:.06em;
+    background:rgba(242,178,51,.07);
+  }
+  .prize-line b{color:var(--gold-hi);font-weight:800}
+
+  /* ---------- 主舞台 ---------- */
+  .stage{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:0}
+  .panel{display:none;width:100%;animation:rise .45s cubic-bezier(.2,.8,.3,1) both}
+  .panel.on{display:block}
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+  /* 設定 */
+  .field-row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(10px,2vw,26px);flex-wrap:wrap}
+  .field label{display:block;font-size:13px;letter-spacing:.24em;color:#A9C2E8;margin-bottom:.7em}
+  .field input{
+    width:clamp(120px,17vw,190px);text-align:center;
+    font-family:var(--num);font-size:clamp(34px,6vh,60px);font-weight:900;
+    color:var(--navy);background:var(--cream);border:none;border-radius:10px;
+    padding:.12em .1em;box-shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  .field input:focus{outline:4px solid var(--gold)}
+  .tilde{font-family:var(--serif);font-size:clamp(22px,4vh,38px);color:var(--gold);padding-bottom:.5em}
+  .count{margin-top:1.4em;font-size:clamp(13px,2vh,18px);color:#B9CFF0;letter-spacing:.1em}
+  .count b{color:var(--gold-hi)}
+  .err{color:#FF9A8A;margin-top:1em;font-size:15px;min-height:1.2em}
+
+  /* 滾動中 */
+  .reel{
+    font-family:var(--num);font-weight:900;font-variant-numeric:tabular-nums;
+    font-size:clamp(110px,30vh,300px);line-height:1;letter-spacing:.02em;
+    color:var(--cream);text-shadow:0 0 60px rgba(120,180,255,.5);
+  }
+  .rolling-msg{margin-top:.6em;letter-spacing:.6em;text-indent:.6em;color:var(--gold);font-size:clamp(13px,2vh,18px)}
+  .dots::after{content:"";animation:dots 1.1s steps(4,end) infinite}
+  @keyframes dots{0%{content:""}25%{content:"·"}50%{content:"··"}75%{content:"···"}}
+
+  /* 得獎 */
+  .congrats{
+    font-family:var(--serif);font-size:clamp(20px,3.6vh,38px);letter-spacing:.35em;text-indent:.35em;
+    color:var(--gold-hi);animation:pop .5s .05s both;
+  }
+  .win-wrap{display:flex;align-items:baseline;justify-content:center;gap:.12em;animation:pop .6s .15s both}
+  .win-num{
+    font-family:var(--num);font-weight:900;font-variant-numeric:tabular-nums;
+    font-size:clamp(130px,36vh,360px);line-height:.95;
+    background:linear-gradient(175deg,#FFF3CF 8%,var(--gold-hi) 34%,var(--gold) 52%,#9E6A05 74%,var(--gold-hi) 96%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 42px rgba(242,178,51,.55));
+  }
+  .win-unit{font-family:var(--serif);font-size:clamp(30px,7vh,72px);color:var(--gold-hi);font-weight:700}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+
+  .prize-card{
+    display:inline-block;margin-top:clamp(10px,2.4vh,26px);
+    border:2px solid var(--gold);border-radius:6px;padding:clamp(10px,2vh,20px) clamp(20px,4vw,54px);
+    background:linear-gradient(180deg,rgba(242,178,51,.16),rgba(242,178,51,.04));
+    animation:pop .5s .45s both;
+  }
+  .prize-card small{display:block;font-size:clamp(11px,1.6vh,14px);letter-spacing:.45em;text-indent:.45em;color:var(--gold);margin-bottom:.6em}
+  .prize-card strong{
+    font-family:var(--serif);font-weight:900;color:#fff;
+    font-size:clamp(20px,4.4vh,46px);letter-spacing:.06em;
+  }
+  .prize-card strong em{font-style:normal;color:var(--gold-hi)}
+
+  /* ---------- 按鈕 ---------- */
+  .btn{
+    font-family:var(--serif);font-weight:900;cursor:pointer;border:none;
+    letter-spacing:.3em;text-indent:.3em;transition:transform .15s,box-shadow .15s,background .15s;
+  }
+  .btn-main{
+    margin-top:clamp(18px,4vh,44px);
+    font-size:clamp(19px,3.4vh,32px);padding:.62em 2.3em;border-radius:999px;
+    color:#3A2400;background:linear-gradient(180deg,var(--gold-hi),var(--gold) 55%,var(--gold-deep));
+    box-shadow:0 14px 34px rgba(242,178,51,.32),inset 0 1px 0 #fff8dd;
+  }
+  .btn-main:hover{transform:translateY(-3px);box-shadow:0 20px 44px rgba(242,178,51,.45),inset 0 1px 0 #fff8dd}
+  .btn-main:active{transform:translateY(0)}
+  .btn-ghost{
+    font-size:clamp(12px,1.9vh,16px);padding:.6em 1.6em;border-radius:999px;
+    background:transparent;color:#BDD3F2;border:1px solid rgba(189,211,242,.35);
+  }
+  .btn-ghost:hover{background:rgba(189,211,242,.12);color:#fff}
+  .again{margin-top:clamp(16px,3.4vh,34px);display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn:focus-visible{outline:3px solid var(--gold-hi);outline-offset:3px}
+
+  /* ---------- 頁尾工具 ---------- */
+  .foot{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:#7E9BC6;letter-spacing:.12em}
+  .tools{display:flex;gap:8px}
+  .tool{background:transparent;border:1px solid rgba(126,155,198,.35);color:#9FB8DC;border-radius:999px;padding:.5em 1.1em;font-size:12px;cursor:pointer;font-family:var(--sans);letter-spacing:.1em}
+  .tool:hover{color:#fff;border-color:var(--gold)}
+  .excluded{color:#7E9BC6}
+  .excluded b{color:var(--gold)}
+
+  #confetti{position:fixed;inset:0;z-index:5;pointer-events:none}
+
+  @media (max-width:560px){
+    .rule i{width:18vw}
+    .foot{flex-direction:column;gap:8px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="head">
+    <div class="eyebrow">JIALI ROTARY CLUB</div>
+    <div class="rule"><i></i><span>◆</span><i></i></div>
+    <h1>佳里扶輪社　8月17日 抽獎</h1>
+    <div class="prize-line">唯一獎項　<b>典藏臺南 肌密保養面膜禮盒</b>　一盒</div>
+  </header>
+
+  <main class="stage">
+
+    <!-- 設定 -->
+    <section class="panel on" id="p-setup">
+      <div class="field-row">
+        <div class="field">
+          <label for="from">起始號碼</label>
+          <input id="from" type="number" min="1" max="999" value="1" inputmode="numeric">
+        </div>
+        <div class="tilde">至</div>
+        <div class="field">
+          <label for="to">結束號碼</label>
+          <input id="to" type="number" min="1" max="999" value="30" inputmode="numeric">
+        </div>
+      </div>
+      <div class="count" id="count"></div>
+      <div class="err" id="err"></div>
+      <button class="btn btn-main" id="btn-draw">開始抽獎</button>
+    </section>
+
+    <!-- 滾動 -->
+    <section class="panel" id="p-roll">
+      <div class="reel" id="reel">00</div>
+      <div class="rolling-msg">幸運得主產生中<span class="dots"></span></div>
+    </section>
+
+    <!-- 結果 -->
+    <section class="panel" id="p-win">
+      <div class="congrats">恭喜中獎</div>
+      <div class="win-wrap"><div class="win-num" id="winNum">00</div><div class="win-unit">號</div></div>
+      <div class="prize-card">
+        <small>獲　得</small>
+        <strong>典藏臺南 肌密保養面膜禮盒 <em>一盒</em></strong>
+      </div>
+      <div class="again">
+        <button class="btn btn-ghost" id="btn-again">再抽一次（不重複）</button>
+        <button class="btn btn-ghost" id="btn-reset">重新設定號碼</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <div class="excluded" id="drawn"></div>
+    <div class="tools">
+      <button class="tool" id="btn-sound">🔊 音效</button>
+      <button class="tool" id="btn-full">⛶ 全螢幕</button>
+    </div>
+  </footer>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+(function(){
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const pSetup=$("p-setup"), pRoll=$("p-roll"), pWin=$("p-win");
+  const fromEl=$("from"), toEl=$("to"), countEl=$("count"), errEl=$("err");
+  const reel=$("reel"), winNum=$("winNum"), drawnEl=$("drawn");
+
+  let pool=[], drawn=[], pad=2, busy=false, soundOn=true;
+
+  /* ---------- 音效（WebAudio，免檔案） ---------- */
+  let ac=null;
+  function ctx(){ if(!ac) ac=new (window.AudioContext||window.webkitAudioContext)(); return ac; }
+  function beep(freq,dur,type,vol){
+    if(!soundOn) return;
+    try{
+      const c=ctx(), o=c.createOscillator(), g=c.createGain();
+      o.type=type||"square"; o.frequency.value=freq;
+      g.gain.setValueAtTime(vol||0.05,c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+dur);
+      o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+dur);
+    }catch(e){}
+  }
+  function fanfare(){
+    if(!soundOn) return;
+    [[523,0],[659,120],[784,240],[1047,380],[1319,520]].forEach(function(n){
+      setTimeout(function(){ beep(n[0],0.55,"triangle",0.10); },n[1]);
+    });
+  }
+
+  /* ---------- 號碼設定 ---------- */
+  function readRange(){
+    const a=parseInt(fromEl.value,10), b=parseInt(toEl.value,10);
+    if(!Number.isFinite(a)||!Number.isFinite(b)) return {ok:false,msg:"請輸入起始與結束號碼"};
+    if(a<1||b<1) return {ok:false,msg:"號碼請從 1 號開始"};
+    if(b<a) return {ok:false,msg:"結束號碼要大於或等於起始號碼"};
+    if(b-a+1>999) return {ok:false,msg:"號碼範圍請控制在 999 個以內"};
+    return {ok:true,a:a,b:b};
+  }
+  function refresh(){
+    const r=readRange();
+    if(!r.ok){ countEl.textContent=""; errEl.textContent=r.msg; return; }
+    errEl.textContent="";
+    pad=String(r.b).length<2?2:String(r.b).length;
+    countEl.innerHTML="共 <b>"+(r.b-r.a+1)+"</b> 位參加　抽出 <b>1</b> 位幸運得主";
+    reel.textContent=fmt(r.a);
+  }
+  function fmt(n){ return String(n).padStart(pad,"0"); }
+  fromEl.addEventListener("input",refresh);
+  toEl.addEventListener("input",refresh);
+
+  function show(panel){
+    [pSetup,pRoll,pWin].forEach(function(p){ p.classList.toggle("on",p===panel); });
+  }
+
+  /* ---------- 抽獎 ---------- */
+  function buildPool(){
+    const r=readRange();
+    if(!r.ok){ errEl.textContent=r.msg; return false; }
+    pool=[]; for(let i=r.a;i<=r.b;i++) if(drawn.indexOf(i)===-1) pool.push(i);
+    if(!pool.length){ errEl.textContent="號碼都抽完了，請重新設定"; return false; }
+    return true;
+  }
+  function pick(){
+    const buf=new Uint32Array(1);
+    if(window.crypto&&window.crypto.getRandomValues){
+      window.crypto.getRandomValues(buf);
+      return pool[buf[0]%pool.length];
+    }
+    return pool[Math.floor(Math.random()*pool.length)];
+  }
+
+  function draw(){
+    if(busy) return;
+    if(!buildPool()) return;
+    busy=true;
+    try{ ctx().resume(); }catch(e){}
+    const winner=pick();
+    show(pRoll);
+
+    const DUR=4200, t0=performance.now();
+    (function tick(){
+      const p=Math.min(1,(performance.now()-t0)/DUR);
+      reel.textContent=fmt(pool[Math.floor(Math.random()*pool.length)]);
+      beep(660+p*440,0.03,"square",0.03);
+      if(p<1) setTimeout(tick, 38+340*Math.pow(p,3.2));
+      else reveal(winner);
+    })();
+  }
+
+  function reveal(n){
+    drawn.push(n);
+    winNum.textContent=fmt(n);
+    show(pWin);
+    fanfare();
+    burst();
+    setTimeout(burst,600);
+    setTimeout(burst,1300);
+    drawnEl.innerHTML = drawn.length>1 ? "已抽出：<b>"+drawn.map(fmt).join("、")+"</b>" : "";
+    busy=false;
+  }
+
+  $("btn-draw").addEventListener("click",draw);
+  $("btn-again").addEventListener("click",draw);
+  $("btn-reset").addEventListener("click",function(){
+    drawn=[]; drawnEl.textContent=""; stopConfetti(); show(pSetup); refresh();
+  });
+  document.addEventListener("keydown",function(e){
+    if(e.code==="Space"||e.code==="Enter"){
+      if(document.activeElement&&document.activeElement.tagName==="INPUT") return;
+      e.preventDefault(); if(!busy) draw();
+    }
+  });
+
+  /* ---------- 工具列 ---------- */
+  $("btn-sound").addEventListener("click",function(){
+    soundOn=!soundOn; this.textContent=soundOn?"🔊 音效":"🔇 靜音";
+  });
+  $("btn-full").addEventListener("click",function(){
+    if(document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
+  });
+
+  /* ---------- 彩帶 ---------- */
+  const cv=$("confetti"), cx=cv.getContext("2d");
+  let bits=[], raf=null;
+  function size(){ cv.width=innerWidth*devicePixelRatio; cv.height=innerHeight*devicePixelRatio; cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); }
+  size(); addEventListener("resize",size);
+
+  const COLORS=["#F2B233","#FFDA7A","#FFFFFF","#1B4FA0","#7FB2FF","#C98A12"];
+  function burst(){
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const W=innerWidth,H=innerHeight;
+    for(let i=0;i<170;i++){
+      const side=Math.random()<.5;
+      bits.push({
+        x: side? -20 : W+20,
+        y: H*(0.35+Math.random()*0.5),
+        vx:(side?1:-1)*(6+Math.random()*11),
+        vy:-(7+Math.random()*11),
+        w:5+Math.random()*9, h:8+Math.random()*13,
+        c:COLORS[Math.floor(Math.random()*COLORS.length)],
+        r:Math.random()*Math.PI, vr:(Math.random()-.5)*0.35, life:1
+      });
+    }
+    for(let i=0;i<70;i++){
+      bits.push({
+        x:W/2+(Math.random()-.5)*W*0.5, y:-20,
+        vx:(Math.random()-.5)*3, vy:2+Math.random()*4,
+        w:4+Math.random()*7, h:7+Math.random()*11,
+        c:COLORS[Math.floor(Math.random()*COLORS.length)],
+        r:Math.random()*Math.PI, vr:(Math.random()-.5)*0.3, life:1
+      });
+    }
+    if(!raf) loop();
+  }
+  function loop(){
+    cx.clearRect(0,0,innerWidth,innerHeight);
+    for(let i=bits.length-1;i>=0;i--){
+      const b=bits[i];
+      b.vy+=0.32; b.vx*=0.992; b.x+=b.vx; b.y+=b.vy; b.r+=b.vr;
+      if(b.y>innerHeight+60) b.life-=0.05;
+      if(b.life<=0||b.y>innerHeight+300){ bits.splice(i,1); continue; }
+      cx.save(); cx.globalAlpha=Math.max(0,b.life); cx.translate(b.x,b.y); cx.rotate(b.r);
+      cx.fillStyle=b.c; cx.fillRect(-b.w/2,-b.h/2,b.w,b.h*Math.abs(Math.cos(b.r)));
+      cx.restore();
+    }
+    raf = bits.length? requestAnimationFrame(loop) : (cx.clearRect(0,0,innerWidth,innerHeight), null);
+  }
+  function stopConfetti(){ bits=[]; if(raf){cancelAnimationFrame(raf);raf=null;} cx.clearRect(0,0,innerWidth,innerHeight); }
+
+  refresh();
+})();
+</script>
+</body>
+</html>
